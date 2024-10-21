@@ -1,3 +1,4 @@
+
 #!/bin/bash
 #
 # https://github.com/P3TERX/Actions-OpenWrt
@@ -11,7 +12,8 @@
 #
 
 # Uncomment a feed source
-#sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
+sed -i 's/^#\(src-git luci https:\/\/github.com\/coolsnowwolf\/luci\)/\1/' feeds.conf.default
+
 # 定义变量
 telephony_line='src-git telephony https://github.com/openwrt/telephony.git;openwrt-23.05'
 luci_line='src-git luci https://github.com/coolsnowwolf/luci.git;openwrt-23.05'
@@ -30,7 +32,15 @@ else
     echo "$luci_line" >> feeds.conf.default
 fi
 
-# Add a feed source
-echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
-echo 'src-git small https://github.com/kenzok8/small' >>feeds.conf.default
-echo 'src-git smpackage https://github.com/kenzok8/small-package' >>feeds.conf.default
+# 添加额外的 feed 源
+extra_feeds=(
+    'src-git kenzo https://github.com/kenzok8/openwrt-packages'
+    'src-git small https://github.com/kenzok8/small'
+    'src-git smpackage https://github.com/kenzok8/small-package'
+)
+
+for feed in "${extra_feeds[@]}"; do
+    if ! grep -q "^#\?$feed" feeds.conf.default; then
+        echo "$feed" >> feeds.conf.default
+    fi
+done
