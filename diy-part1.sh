@@ -12,6 +12,23 @@
 
 # Uncomment a feed source
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
+# 定义变量
+telephony_line='src-git telephony https://github.com/openwrt/telephony.git;openwrt-23.05'
+luci_line='src-git luci https://github.com/coolsnowwolf/luci.git;openwrt-23.05'
+
+# 检查并处理 telephony 行
+if grep -q '^#\?'"$telephony_line"' feeds.conf.default; then
+    sed -i 's/^#\?'"$telephony_line"'/'"$telephony_line"'/g' feeds.conf.default
+else
+    echo "$telephony_line" >> feeds.conf.default
+fi
+
+# 检查并处理 luci 行
+if grep -q '^#\?'"$luci_line"' feeds.conf.default; then
+    sed -i 's/^#\?'"$luci_line"'/'"$luci_line"'/g' feeds.conf.default
+else
+    echo "$luci_line" >> feeds.conf.default
+fi
 
 # Add a feed source
 echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
